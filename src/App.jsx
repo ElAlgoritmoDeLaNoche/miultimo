@@ -1,35 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const now = new Date(); // Tiempo actual
+  const fiveDaysAgo = new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000); // Fecha de hace 5 días
+
+  const [timeLeft, setTimeLeft] = useState(
+    Math.max(Math.floor((now - fiveDaysAgo) / (1000 * 60)), 0) // Diferencia en minutos
+  );
+
+  useEffect(() => {
+    if (timeLeft <= 0) return; // Detener el cronómetro cuando llega a 0
+
+    const timer = setInterval(() => {
+      setTimeLeft((prevTime) => prevTime - 1);
+    }, 60000); // Reduce 1 minuto cada 60,000 ms (1 minuto)
+
+    return () => clearInterval(timer); // Limpiar el intervalo al desmontar
+  }, [timeLeft]);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100vh",
+        fontFamily: "Arial, sans-serif",
+        textAlign: "center",
+      }}
+    >
+      <div style={{ fontSize: "2rem", fontWeight: "bold" }}>
+        {timeLeft > 0
+          ? `Tiempo restante: ${Math.floor(timeLeft / 60)} horas y ${
+              timeLeft % 60
+            } minutos`
+          : "¡Tiempo terminado!"}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
+      <p style={{ fontSize: "1.5rem", marginTop: "20px", color: "red" }}>
+        Te amo ❤️
       </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
